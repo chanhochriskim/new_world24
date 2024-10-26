@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Tip Scroller</title>
+    <style>
+        /* Scroll container styling */
+        #scroll-container {
+            border: 3px solid black;
+            border-radius: 5px;
+            overflow: hidden;
+            width: 80%; /* Adjust as needed */
+            margin: 20px auto; /* Center the container */
+            height: 50px;
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        /* Scroll text styling and animation */
+        #scroll-text {
+            white-space: nowrap;
+            font-size: 24px;
+            animation: scroll-animation 15s linear infinite;
+        }
+
+        /* Animation keyframes for the scrolling effect */
+        @keyframes scroll-animation {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="scroll-container">
+    <div id="scroll-text">Loading tip...</div>
+</div>
+
+<script>
+    // Function to fetch tips from tips.json
+    async function fetchTips() {
+        try {
+            const response = await fetch('tips.json');
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            return data.tips;
+        } catch (error) {
+            console.error('Error fetching tips:', error);
+            return ["Error loading tips!"];
+        }
+    }
+
+    // Function to display a random tip
+    async function displayRandomTip() {
+        const tips = await fetchTips();
+        const randomIndex = Math.floor(Math.random() * tips.length);
+        document.getElementById('scroll-text').innerText = tips[randomIndex];
+    }
+
+    // Display a new tip every 30 seconds
+    setInterval(displayRandomTip, 30000);
+
+    // Display the first tip immediately on page load
+    displayRandomTip();
+</script>
+
+</body>
+</html>
