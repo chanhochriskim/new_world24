@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import './App.css';
 import backgroundMusic from './background.mp3'; // Import audio file
 
+
+//future: API, add account so can save progress on who's been unlocked, who's at what percentage
+
 // Evolution chains with level thresholds
 const evolutionChains = {
   Pichu: [
@@ -15,6 +18,66 @@ const evolutionChains = {
     { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/blastoise.png" },
   ],
   Charmander: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Bublasaur: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Caterpie: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Magnemite: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Pidgey: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Cleffa: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Zubat: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Mankey: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Poliwag: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Abra: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Machop: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Geodude: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
+    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+  ],
+  Gastly: [
     { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
     { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
     { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
@@ -114,17 +177,18 @@ function App() {
     return (
       <div
         style={{
-          width: '375px',
+          width: '18vw',
           margin: '0 auto',
           border: '1px solid #ccc',
           padding: '20px',
           height: '90vh',
           boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-          textAlign: 'center',
+          textAlign: 'center'
         }}
       >
-        <h2>Choose Your Pokémon</h2>
-        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '20px' }}>
+        <img src={"BOILERMON.png"} style = {{width: "8vw", margin: "0 auto"}}></img>
+        <h2 style = {{margin: "0vh"}}>Choose Your Pokémon!</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', marginTop: '0vh' }}>
           {Object.keys(evolutionChains).map((pokemonName) => (
             <div key={pokemonName} style={{ textAlign: 'center' }}>
               <img
@@ -133,7 +197,7 @@ function App() {
                 style={{ width: '100px', cursor: 'pointer' }}
                 onClick={() => setSelectedPokemon({ name: pokemonName })}
               />
-              <p>{pokemonName}</p>
+              <p style={{marginBottom:"0vh"}}>{pokemonName}</p>
             </div>
           ))}
         </div>
@@ -226,7 +290,7 @@ function App() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '105vh',
+            height: '120vh',
             textAlign: 'center',
           }}>
           <p style={{ fontSize: '19px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>You've reached the final stage!</p>
