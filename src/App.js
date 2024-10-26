@@ -165,14 +165,15 @@ function App() {
         <>
           <div style={{
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
               height: '110vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
+            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto', marginTop: '46.5vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
             {showTextBox && (
               <div style={{
-                marginBottom: '0px', // Position the text box above the image
+                marginBottom: '5vh', // Position the text box above the image
                 padding: '10px',
                 border: '1px solid gray',
                 borderRadius: '5px',
@@ -183,11 +184,10 @@ function App() {
                 {tipsList[tipIndex]}
               </div>
             )}
-            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto' }} className="bouncy" onClick = {handleClick}/>
           </div>
 
           {/* Food Buttons */}
-          <div style={{ position: 'absolute', bottom: 490, right: 0 }}>
+          <div style={{ position: 'absolute', top: 0, right: 0 }}>
             <button onClick={() => increaseLevel(1)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
