@@ -145,11 +145,11 @@ function App() {
   return (
     <div className="app-container"
       style={{
-        width: '375px',
+        width: '50vh',
         margin: '0 auto',
         border: '1px solid #ccc',
         padding: '20px',
-        height: '90vh',
+        height: '100vh',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
         position: 'relative',
       }}
@@ -167,10 +167,10 @@ function App() {
               display: 'flex',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              height: '110vh',
+              height: '100vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
-            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto', marginTop: '46.5vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
+            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto', marginTop: '53vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
             {showTextBox && (
               <div style={{
                 marginBottom: '5vh', // Position the text box above the image

@@ -63,7 +63,7 @@ h2 {
 }
 
 .app-container {
-  width: 375px;
+  width: 50vh;
   margin: 0 auto;
   border: 1px solid #ccc;
   padding: 20px;
