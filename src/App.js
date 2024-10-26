@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import backgroundMusic from './background.mp3'; // Import audio file
 
 // Evolution chains with level thresholds
 const evolutionChains = {
@@ -29,23 +30,17 @@ function App() {
 
   const increaseLevel = (points) => {
     setLevel(level + points);
-    if (points == 1) {
-      setCookiesEaten(cookiesEaten + 1);
-    }
-    if (points == 5) {
-      setSteakEaten(steakEaten + 1);
-    }
-    if (points == 25) {
-      setGapplesEaten(gapplesEaten + 1);
-    }
+    if (points === 1) setCookiesEaten(cookiesEaten + 1);
+    if (points === 5) setSteakEaten(steakEaten + 1);
+    if (points === 25) setGapplesEaten(gapplesEaten + 1);
   };
 
   const resetLevel = () => {
     setLevel(0);
-    setSelectedPokemon(null); // resetting back to the selection part. 
+    setSelectedPokemon(null);
   };
 
-  // the current pokemon stage based on level.
+  // Current pokemon stage based on level
   let displayedImage = "";
   if (selectedPokemon) {
     const evolutionChain = evolutionChains[selectedPokemon.name];
@@ -55,7 +50,7 @@ function App() {
     displayedImage = currentStage.image;
   }
 
-  // selection screen to choose pokemon
+  // Selection screen to choose pokemon
   if (!selectedPokemon) {
     return (
       <div
@@ -83,12 +78,13 @@ function App() {
             </div>
           ))}
         </div>
+        <audio src={backgroundMusic} autoPlay loop />
       </div>
     );
   }
 
   return (
-    <div className = "app-container"
+    <div className="app-container"
       style={{
         width: '375px',
         margin: '0 auto',
@@ -99,103 +95,72 @@ function App() {
         position: 'relative',
       }}
     >
+      {/* Background Music */}
+      <audio src={backgroundMusic} autoPlay loop />
+
       {/* Level display */}
       <h2 style={{ position: 'absolute', top: 0, left: 30 }}>Level: {level}</h2>
 
-      {/* Conditional Rendering: Show either the main content or the final stage message */}
+      {/* Main Content */}
       {level < 100 ? (
         <>
-          {/* Pokémon Display */}
-          <div
-            style={{
+          <div style={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               height: '110vh',
-            }}
-          >
-            <img
-              src={displayedImage}
-              alt="Pokemon"
-              style={{ width: '300px', height: 'auto' }}
-              className="bouncy"
-            />
+            }}>
+            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto' }} className="bouncy" />
           </div>
 
           {/* Food Buttons */}
           <div style={{ position: 'absolute', bottom: 490, right: 0 }}>
-            <button
-              onClick={() => increaseLevel(1)}
-              style={{
+            <button onClick={() => increaseLevel(1)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 margin: '10px',
-              }}
-            >
-              <img
-                src="https://minecraft.wiki/images/Cookie_JE2_BE2.png?a911c&20190505051355"
-                alt="Cookie"
-                style={{ width: 30, height: 30, marginRight: 5 }}
-              />
+              }}>
+              <img src="https://minecraft.wiki/images/Cookie_JE2_BE2.png?a911c&20190505051355" alt="Cookie" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+1)
             </button>
-            <button
-              onClick={() => increaseLevel(5)}
-              style={{
+            <button onClick={() => increaseLevel(5)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 margin: '10px',
-              }}
-            >
-              <img
-                src="https://minecraft.wiki/images/Steak_JE4_BE3.png?45317&20190504055306"
-                alt="Steak"
-                style={{ width: 30, height: 30, marginRight: 5 }}
-              />
+              }}>
+              <img src="https://minecraft.wiki/images/Steak_JE4_BE3.png?45317&20190504055306" alt="Steak" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+5)
             </button>
-            <button
-              onClick={() => increaseLevel(25)}
-              style={{
+            <button onClick={() => increaseLevel(25)} style={{
                 padding: '10px 5.5px',
                 fontSize: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 margin: '10px',
-              }}
-            >
-              <img
-                src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809"
-                alt="Golden Apple"
-                style={{ width: 30, height: 30, marginRight: 5 }}
-              />
+              }}>
+              <img src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809" alt="Golden Apple" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+25)
             </button>
           </div>
         </>
       ) : (
-        // Final Stage Message and Retry Button
-        <div
-          style={{
+        <div style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             height: '105vh',
             textAlign: 'center',
-          }}
-        >
+          }}>
           <p style={{ fontSize: '19px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>You've reached the final stage!</p>
           <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total easy questions solved: {cookiesEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total medium questions solved {steakEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total hard questions solved {gapplesEaten}</p>
-          <button
-            onClick={resetLevel}
-            style={{
+          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total medium questions solved: {steakEaten}</p>
+          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total hard questions solved: {gapplesEaten}</p>
+          <button onClick={resetLevel} style={{
               padding: '10px 20px',
               fontSize: '16px',
               cursor: 'pointer',
@@ -203,10 +168,7 @@ function App() {
               border: 'none',
               borderRadius: '5px',
               marginTop: '10px',
-            }}
-          >
-            Retry
-          </button>
+            }}>Retry</button>
         </div>
       )}
     </div>
