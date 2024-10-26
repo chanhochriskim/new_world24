@@ -170,7 +170,7 @@ function App() {
               height: '100vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
-            <img src={displayedImage} alt="Pokemon" style={{ width: '300px', height: 'auto', marginTop: '53vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
+            <img src={displayedImage} alt="Pokemon" style={{ width: '20vw', height: 'auto', marginTop: '49vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
             {showTextBox && (
               <div style={{
                 marginBottom: '5vh', // Position the text box above the image
