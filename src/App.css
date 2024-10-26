@@ -61,3 +61,17 @@ h2 {
 .bouncy {
   animation: bounce 1s infinite; /* duration and repetition */
 }
+
+.app-container {
+  width: 375px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+  height: 90vh;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background-image: url('./purdue_gate_crop.jpg');
+  background-size: cover;
+  background-position: center;
+}
+

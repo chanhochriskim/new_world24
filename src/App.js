@@ -76,7 +76,7 @@ function App() {
   }
 
   return (
-    <div
+    <div className = "app-container"
       style={{
         width: '375px',
         margin: '0 auto',
@@ -99,7 +99,7 @@ function App() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '60vh',
+              height: '110vh',
             }}
           >
             <img
