@@ -23,9 +23,21 @@ const evolutionChains = {
 function App() {
   const [level, setLevel] = useState(0);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [cookiesEaten, setCookiesEaten] = useState(0);
+  const [steakEaten, setSteakEaten] = useState(0);
+  const [gapplesEaten, setGapplesEaten] = useState(0);
 
   const increaseLevel = (points) => {
     setLevel(level + points);
+    if (points == 1) {
+      setCookiesEaten(cookiesEaten + 1);
+    }
+    if (points == 5) {
+      setSteakEaten(steakEaten + 1);
+    }
+    if (points == 25) {
+      setGapplesEaten(gapplesEaten + 1);
+    }
   };
 
   const resetLevel = () => {
@@ -173,11 +185,14 @@ function App() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '70vh',
+            height: '105vh',
             textAlign: 'center',
           }}
         >
-          <p style={{ fontSize: '18px', fontWeight: 'bold' }}>You've reached the final stage!</p>
+          <p style={{ fontSize: '19px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>You've reached the final stage!</p>
+          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total easy questions solved: {cookiesEaten}</p>
+          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total medium questions solved {steakEaten}</p>
+          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total hard questions solved {gapplesEaten}</p>
           <button
             onClick={resetLevel}
             style={{
