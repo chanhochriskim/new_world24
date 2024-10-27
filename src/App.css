@@ -50,7 +50,7 @@ button {
 }
 
 h2 {
-  font-family: Arial, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: #333;
 }
 
@@ -64,15 +64,13 @@ h2 {
 }
 
 .bouncy {
-  animation: bounce 1s infinite; /* duration and repetition */
+  animation: bounce 0.97s infinite; /* duration and repetition */
 }
 
 .app-container {
-  width: 50vh;
   margin: 0 auto;
   border: 1px solid #ccc;
   padding: 20px;
-  height: 93vh;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
   background-image: url('./purdue_gate_crop.jpg');

@@ -1,15 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import backgroundMusic from './background.mp3'; // Import audio file
 import victoryMusic from './victory.mp3';
 
-
-//future: API, add account so can save progress on who's been unlocked, who's at what percentage, also battles, also leaderboards, 
-//add pokemon to win screen, beginning screen make them all grayed out changing saturation
-//add xxx lvl yyy instead of just level at the top so people can discover pokemon, maybe ??? at the beginning
-//future: add even more pokemon, more rare pokemon that people don't know about, also animations for upgrading and winning, animation for transforming
-//add pokemon sound for tips, problem solved, and sound for upgrade (longer sound), choose your pokemoon packground texture of slightly worn page in book
+//future: add account so can save progress on who's been unlocked, who's at what percentage,
+//add back button
+//add pokemon sound for tips, problem solved, and sound/animation for upgrade (longer sound)
 //if you are top of leaderboard or top of something your top pokemon or last pokemon trained with becomes hollo/shiny, tip animation of size bopping
+//future: add confetti to win, add visual effects for upgrades
+//farther future: Leaderboards and Battles, even more pokemon
 
 // Evolution chains with level thresholds
 const evolutionChains = {
@@ -125,74 +124,84 @@ var completedPokemon = {
   Cyndaquil: 0
 }
 
-var startingLeets = [0, 0, 0];
-var leetDiffs = [0, 0, 0];
-var username = "";
-var APIurl = "";
+var leetDiffs1 = [0, 0, 0];
+var leetDiffs2 = [0, 0, 0];
+var username = null;
+var APIurl = null;
+var onLoadSite = false;
 
+var tipsList = [
+  "Take care of your mental health in this major. Find some healthy coping mechanisms like working out or going for walks.",
+  "Have personal projects. Work on things in your free time to further your skills.",
+  "Take a shower. Please. Do not make the CS major allegations true.",
+  "Explore different tracks and find what works for you. SWE/ML may not be for you and that's okay.",
+  "Take some fun classes. ",
+  "Comparison is the thief of joy. It's easy to feel discouraged with so many smart people around. Focus on your own goals and know you'll get there too.",
+  "Apply to internships early. Do not wait until spring semester to look for summer opportunities.",
+  "Try to find at least one internship before your senior year.",
+  "If you don't like having to learn an adapt, CS may not be for you.",
+  "Don't trust/use Chat-GPT 100%. It will bite you in the butt. You're going to Purdue for CS, not GPT.",
+  "Have 2 friend groups. You don't want a falling out with friends to cause you to spiral.",
+  "Don't hold back from things because you're not confident enough. You got this.",
+  "Talk to people in your CS classes. Try to make friends because it's a lot less painful to suffer through CS classes together.",
+  "Try to tailor your resume towards the position and company your are applying to.",
+  "Chat-GPT is a great tool for explaining things. Do not get reliant on it.",
+  "It's not the end of the world if you have to retake a class. Just get that Purdue Grit and you'll be good.",
+  "Procrastination will ruin your college experience. Build good time-management habits.",
+  "Plan your schedule carefully. Balance hard and easy classes each semester.",
+  "Attend career fairs, even as a freshman. It’s great practice and you’ll make valuable connections.",
+  "Learn to use Git/GitHub early. Version control is essential for coding projects.",
+  "Start building your LinkedIn profile. Connect with peers, professors, and recruiters.",
+  "Use Purdue’s free resources, like the writing lab or counseling services. They’re there to help you.",
+  "Don't ignore your gen-ed courses. They’re a good way to explore interests outside CS.",
+  "Form study groups for hard classes. Two minds are often better than one.",
+  "Don’t be afraid to ask questions in class. Professors appreciate engaged students.",
+  "Get familiar with Purdue’s Brightspace and myPurdue systems. It’ll save you time and stress.",
+  "Experiment with different programming languages. Java, Python, and C++ are just the start.",
+  "Practice coding on LeetCode or HackerRank. It’s great prep for technical interviews.",
+  "Take notes by hand during lectures. It can help with retention and focus.",
+  "Learn to manage stress during exams. Use breathing exercises or take short breaks.",
+  "Office hours aren't just for help. Use them to build relationships with professors.",
+  "Don’t overload your schedule with too many extracurriculars. Leave time for yourself.",
+  "Use the Purdue CoRec to stay active. Physical fitness boosts mental performance.",
+  "Stay up-to-date with the syllabus. Professors won’t remind you about every deadline.",
+  "Don’t expect to understand everything immediately. CS concepts take time to sink in.",
+  "Learn the basics of UNIX and command-line tools. You’ll use them throughout your degree.",
+  "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging.", 
+];
+
+function randomizeArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+  return array;
+}
+
+tipsList = randomizeArray(tipsList);
+tipsList.push("Click on your Pokémon for useful CS tips!");
+var tipIndex = tipsList.length - 1;
 
 function App() {
-  var tipsList = [
-    "Take care of your mental health in this major. Find some healthy coping mechanisms like working out or going for walks.",
-    "Have personal projects. Work on things in your free time to further your skills.",
-    "Take a shower. Please. Do not make the CS major allegations true.",
-    "Explore different tracks and find what works for you. SWE/ML may not be for you and that's okay.",
-    "Take some fun classes. ",
-    "Comparison is the thief of joy. It's easy to feel discouraged with so many smart people around. Focus on your own goals and know you'll get there too.",
-    "Apply to internships early. Do not wait until spring semester to look for summer opportunities.",
-    "Try to find at least one internship before your senior year.",
-    "If you don't like having to learn an adapt, CS may not be for you.",
-    "Don't trust/use Chat-GPT 100%. It will bite you in the butt. You're going to Purdue for CS, not GPT.",
-    "Have 2 friend groups. You don't want a falling out with friends to cause you to spiral.",
-    "Don't hold back from things because you're not confident enough. You got this.",
-    "Talk to people in your CS classes. Try to make friends because it's a lot less painful to suffer through CS classes together.",
-    "Try to tailor your resume towards the position and company your are applying to.",
-    "Chat-GPT is a great tool for explaining things. Do not get reliant on it.",
-    "It's not the end of the world if you have to retake a class. Just get that Purdue Grit and you'll be good.",
-    "Procrastination will ruin your college experience. Build good time-management habits.",
-    "Plan your schedule carefully. Balance hard and easy classes each semester.",
-    "Attend career fairs, even as a freshman. It’s great practice and you’ll make valuable connections.",
-    "Learn to use Git/GitHub early. Version control is essential for coding projects.",
-    "Start building your LinkedIn profile. Connect with peers, professors, and recruiters.",
-    "Use Purdue’s free resources, like the writing lab or counseling services. They’re there to help you.",
-    "Don't ignore your gen-ed courses. They’re a good way to explore interests outside CS.",
-    "Form study groups for hard classes. Two minds are often better than one.",
-    "Don’t be afraid to ask questions in class. Professors appreciate engaged students.",
-    "Get familiar with Purdue’s Brightspace and myPurdue systems. It’ll save you time and stress.",
-    "Experiment with different programming languages. Java, Python, and C++ are just the start.",
-    "Practice coding on LeetCode or HackerRank. It’s great prep for technical interviews.",
-    "Take notes by hand during lectures. It can help with retention and focus.",
-    "Learn to manage stress during exams. Use breathing exercises or take short breaks.",
-    "Office hours aren't just for help. Use them to build relationships with professors.",
-    "Don’t overload your schedule with too many extracurriculars. Leave time for yourself.",
-    "Use the Purdue CoRec to stay active. Physical fitness boosts mental performance.",
-    "Stay up-to-date with the syllabus. Professors won’t remind you about every deadline.",
-    "Don’t expect to understand everything immediately. CS concepts take time to sink in.",
-    "Learn the basics of UNIX and command-line tools. You’ll use them throughout your degree.",
-    "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging.", 
-    "Click on me for some useful CS tips!"
-  ];
-
-  function randomizeArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-    }
-    return array;
-  }
-
-  var tipsList = randomizeArray(tipsList);
-  var tipIndex = 0;
-
   const [level, setLevel] = useState(0);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [cookiesEaten, setCookiesEaten] = useState(0);
   const [steakEaten, setSteakEaten] = useState(0);
   const [gapplesEaten, setGapplesEaten] = useState(0);
-  const [showTextBox, setShowTextBox] = useState(true);
   const [isPast25, setIsPast25] = useState(0);
   const currentAudioRef = useRef(null);
   const newAudioRef = useRef(null);
+  const [updateRenderer, setUpdateRenderer] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCount(count + 1);
+      if (username == null) setLeetCodes();
+      if ((selectedPokemon != null) && (level < 100)) addLeetCodes();
+    }, 3000)
+    return () => clearInterval(intervalId);
+  }, [count])
 
   const playNewAudio = () => {
     // Stop the current audio if it's playing
@@ -206,10 +215,11 @@ function App() {
   };
 
   const handleClick = () => {
-    setShowTextBox(!showTextBox); // Toggle the text box visibility
-    if (showTextBox) {
-      tipIndex++;
+    tipIndex++;
+    if (tipIndex == tipsList.length) {
+      tipIndex = 0;
     }
+    setUpdateRenderer(updateRenderer + 1)
   };
 
   const increaseLevel = (points) => {
@@ -236,55 +246,55 @@ function App() {
   }
 
   async function setLeetCodes() {
-    username = prompt("Enter Leetcode Username");
+    username = prompt("Enter Your Leetcode Username:");
     if (username == null) {
       alert("No username entered.");
-      return;
+      return false;
     }
     APIurl = `http://localhost:3001/${username}`;
     const leetData = await fetchData(APIurl);
-    if (leetData == null) {
-      alert("Invalid username.") //TODO more robust error detection system based on API
-      return;
-    }
     console.log(leetData);
-    startingLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
-    console.log(startingLeets);
+    if (leetData == null || leetData.errors != undefined) {
+      username = null;
+      alert("Invalid username."); 
+      return false;
+    }
+    leetDiffs1 = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    console.log(leetDiffs1);
+    return true;
   }
 
   async function addLeetCodes() {
+    console.log("add attempted");
     if (username == null) {
       alert("No username entered.");
+      username = prompt("Enter Your Leetcode Username:");
       return;
     }
-    setCookiesEaten(cookiesEaten - leetDiffs[0]);
-    setSteakEaten(steakEaten - leetDiffs[1]);
-    setGapplesEaten(gapplesEaten - leetDiffs[2]);
     const leetData = await fetchData(APIurl);
-    if (leetData == null) {
-      alert("Invalid username.")  //TODO more robust error detection system based on API
+    if (leetData == null || leetData.errors != undefined) {
+      alert("Invalid username.");
+      username = null;
       return;
     }
-    var curLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
-    leetDiffs[0] = curLeets[0] - startingLeets[0];
-    leetDiffs[1] = curLeets[1] - startingLeets[1];
-    leetDiffs[2] = curLeets[2] - startingLeets[2];
-    var newLevel = level + 10 * leetDiffs[0] + 20 * leetDiffs[1] + 40 * leetDiffs[2];
-    if (newLevel >= 100) playNewAudio();
-    setCookiesEaten(cookiesEaten + leetDiffs[0]);
-    setSteakEaten(steakEaten + leetDiffs[1]);
-    setGapplesEaten(gapplesEaten + leetDiffs[2]);
-    if (newLevel >= 25) setIsPast25(100);
-    setLevel(newLevel);
+    leetDiffs2 = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    var newDiffs = [leetDiffs1[0] - leetDiffs2[0], leetDiffs1[1] - leetDiffs2[1], leetDiffs1[2] - leetDiffs2[2]];
+    increaseLevel(10 * newDiffs[0] + 20 * newDiffs[1] + 40 * newDiffs[2]);
+    leetDiffs1 = leetDiffs2;
   }
 
   const resetLevel = () => {
-    completedPokemon[selectedPokemon.name] = 1;
+    completedPokemon[selectedPokemon.name] = level;
     setLevel(0);
     setIsPast25(0);
     setSelectedPokemon(null);
-    setShowTextBox(true);
   };
+
+  if (onLoadSite == false) {
+    onLoadSite = true;
+    var x = setLeetCodes();
+    console.log(x);
+  }
 
   // Current pokemon stage based on level
   let displayedImage = "";
@@ -301,40 +311,40 @@ function App() {
     return (
       <div
         style={{
-          width: '18vw',
+          width: '300px',
           margin: '0 auto',
           border: '1px solid #ccc',
           padding: '2rem',
-          height: '90vh',
+          height: '93vh',
           boxShadow: 'inset 0 0 0 5px #e0e0e0',
           textAlign: 'center',
           backgroundColor: '#f8f8f8'
         }}
       >
-        <img src={"BOILERMON.png"} style = {{width: "8vw", margin: "0 auto"}}></img>
-        <h2 style = {{margin: "0vh", marginTop: "3vh"}}>Choose Your Pokémon!</h2>
+        <img src={"BOILERMON.png"} style = {{width: "150px", margin: "0 auto"}}></img>
+        <h2 style = {{margin: "0vh", marginTop: "3vh", marginBottom: "3vh"}}>Choose Your Pokémon!</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', marginTop: '0vh' }}>
           {Object.keys(evolutionChains).map((pokemonName) => (
             <div key={pokemonName} style={{ textAlign: 'center' }}>
-              {completedPokemon[pokemonName] == 0 ? (
+              {completedPokemon[pokemonName] < 25 ? (
                 <img
                   src={evolutionChains[pokemonName][0].image}
                   alt={pokemonName}
-                  style={{ width: '6vw', cursor: 'pointer', filter: 'brightness(0%)'}}
+                  style={{ width: '100px', cursor: 'pointer', filter: 'brightness(0%)'}}
                   onClick={() => setSelectedPokemon({ name: pokemonName })}
                 />
               ) : (
                 <img
                   src={evolutionChains[pokemonName][0].image}
                   alt={pokemonName}
-                  style={{ width: '6vw', cursor: 'pointer', filter: 'brightness(100%)'}}
+                  style={{ width: '100px', cursor: 'pointer', filter: 'brightness(100%)'}}
                   onClick={() => setSelectedPokemon({ name: pokemonName })}
                 />
               )}
-              {completedPokemon[pokemonName] == 0 ? (
-                <p style={{margin:"0vh", fontFamily: "Verdana", fontWeight: "bold"}}>???</p>
+              {completedPokemon[pokemonName] < 25 ? (
+                <p style={{marginTop:"-2vh", fontFamily: "Verdana", fontWeight: "bold", marginBottom: "1.5vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>???</p>
               ) : (
-                <p style={{margin:"0vh", fontWeight: "bold"}}>{pokemonName}</p>
+                <p style={{marginTop:"-2vh", fontWeight: "bold", marginBottom: "1.5vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>{pokemonName}</p>
               )}
             </div>
           ))}
@@ -342,11 +352,11 @@ function App() {
       </div>
     );
   }
-
+  completedPokemon[selectedPokemon.name] = level
   return (
     <div className="app-container"
       style={{
-        width: '50vh',
+        width: '300px',
         margin: '0 auto',
         border: '1px solid #ccc',
         padding: '2rem',
@@ -355,7 +365,7 @@ function App() {
       }}
     >
       {/* Background Music */}
-      <audio ref={currentAudioRef} src={backgroundMusic} autoPlay loop />
+      <audio ref={currentAudioRef} src={backgroundMusic} autoPlay loop /> 
       <audio ref={newAudioRef} src={victoryMusic} />
 
       {/* Main Content */}
@@ -370,38 +380,36 @@ function App() {
             }}>
             <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Level up your Pokémon with LeetCode!</p>
             {/* Level display */}
-            {isPast25 == 0 ? (
-              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] < 25)) ? (
+              <p style={{color: 'white', marginTop: '37vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
                 <span style={{fontFamily: 'Verdana'}}>???</span> <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
               </p>
             ) : (
-              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+              <p style={{color: 'white', marginTop: '37vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
                 {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
               </p>
             )}
-            {isPast25 == 0 ? (
-              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
+            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] < 25)) ? (
+              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
             ) : (
-              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
             )}
-            {showTextBox && (
-              <div style={{
-                marginTop: '-2.5vh',
-                marginBottom: '5vh', // Position the text box above the image
-                padding: '10px',
-                border: '1px solid gray',
-                borderRadius: '5px',
-                backgroundColor: '#f8f8f8',
-                width: '80%',
-                textAlign: 'center'
-              }}>
-                {tipsList[tipIndex]}
-              </div>
-            )}
+            <div style={{
+              marginTop: '-2.5vh',
+              marginBottom: '5vh', // Position the text box above the image
+              padding: '10px',
+              border: '1px solid gray',
+              borderRadius: '5px',
+              backgroundColor: '#f8f8f8',
+              width: '80%',
+              textAlign: 'center'
+            }}>
+              {tipsList[tipIndex]}
+            </div>
           </div>
 
           {/* Food Buttons */}
-          <div style={{ position: 'absolute', top: 110, right: 30 }}>
+          <div style={{ position: 'absolute', top: 110, right: 30, display: 'none' }}>
             <button onClick={() => increaseLevel(10)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
@@ -432,16 +440,6 @@ function App() {
               <img src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809" alt="Golden Apple" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+25)
             </button>
-            <button onClick={() => setLeetCodes()} style={{
-                padding: '10px 5.5px',
-                fontSize: '18px',
-                display: 'flex',
-                alignItems: 'center',
-                margin: '10px',
-              }}>
-              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
-              (set)
-            </button>
             <button onClick={() => addLeetCodes()} style={{
                 padding: '10px 5.5px',
                 fontSize: '18px',
@@ -450,7 +448,7 @@ function App() {
                 margin: '10px',
               }}>
               <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
-              (add)
+              Update
             </button>
           </div>
         </>
@@ -462,13 +460,13 @@ function App() {
           height: '93vh',
           flexDirection: 'column', // Stack elements vertically
         }}>
-          <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Congratulations on fully<br /> evolving your Pokémon!</p>
-          <p style={{ fontSize: '20px', color: "white", fontWeight: 'bold', textAlign: 'center', marginTop: '0px'}}>Easy: {cookiesEaten} Medium: {steakEaten} Hard: {gapplesEaten}</p>
+          <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh', marginTop: '0vh', textShadow: 'white 0px 0 2px'}}>Congratulations on fully evolving your Pokémon!</p>
+          <p style={{ fontSize: '20px', color: "white", fontWeight: 'bold', textAlign: 'center', marginTop: '0px', textShadow: 'white 0px 0 1px'}}>Easy: {cookiesEaten} Medium: {steakEaten} Hard: {gapplesEaten}</p>
           {/* Level display */}
           <p style={{color: 'white', marginTop: '35vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
             {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
           </p>
-          <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+          <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
 
           <button onClick={resetLevel} style={{
               padding: '12px 24px',
