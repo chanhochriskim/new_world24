@@ -237,18 +237,34 @@ function App() {
 
   async function setLeetCodes() {
     username = prompt("Enter Leetcode Username");
+    if (username == null) {
+      alert("No username entered.");
+      return;
+    }
     APIurl = `http://localhost:3001/${username}`;
     const leetData = await fetchData(APIurl);
+    if (leetData == null) {
+      alert("Invalid username.")
+      return;
+    }
     console.log(leetData);
     startingLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
     console.log(startingLeets);
   }
 
   async function addLeetCodes() {
+    if (username == null) {
+      alert("No username entered.");
+      return;
+    }
     setCookiesEaten(cookiesEaten - leetDiffs[0]);
     setSteakEaten(steakEaten - leetDiffs[1]);
     setGapplesEaten(gapplesEaten - leetDiffs[2]);
     const leetData = await fetchData(APIurl);
+    if (leetData == null) {
+      alert("Invalid username.")
+      return;
+    }
     var curLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
     leetDiffs[0] = curLeets[0] - startingLeets[0];
     leetDiffs[1] = curLeets[1] - startingLeets[1];
