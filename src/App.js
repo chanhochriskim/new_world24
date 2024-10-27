@@ -1,25 +1,135 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 import backgroundMusic from './background.mp3'; // Import audio file
+import victoryMusic from './victory.mp3';
+
+
+//future: API, add account so can save progress on who's been unlocked, who's at what percentage, also battles, also leaderboards, 
+//add pokemon to win screen, beginning screen make them all grayed out changing saturation
+//add xxx lvl yyy instead of just level at the top so people can discover pokemon, maybe ??? at the beginning
+//future: add even more pokemon, more rare pokemon that people don't know about, also animations for upgrading and winning, animation for transforming
+//add pokemon sound for tips, problem solved, and sound for upgrade (longer sound), choose your pokemoon packground texture of slightly worn page in book
+//if you are top of leaderboard or top of something your top pokemon or last pokemon trained with becomes hollo/shiny, tip animation of size bopping
 
 // Evolution chains with level thresholds
 const evolutionChains = {
   Pichu: [
-    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/pichu.png" },
-    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/pikachu.png" },
-    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/raichu.png" },
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/pichu.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/pikachu.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/raichu.png" },
   ],
   Squirtle: [
-    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/squirtle.png" },
-    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/wartortle.png" },
-    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/blastoise.png" },
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/squirtle.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/wartortle.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/blastoise.png" },
   ],
   Charmander: [
-    { level: 0, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmander.png" },
-    { level: 20, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charmeleon.png" },
-    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/charizard.png" },
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/charmander.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/charmeleon.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/charizard.png" },
+  ],
+  Bulbasaur: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/bulbasaur.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/ivysaur.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/venusaur.png" },
+  ],
+  Caterpie: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/caterpie.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/metapod.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/butterfree.png" },
+  ],
+  Magnemite: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/magnemite.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/magneton.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/magnezone.png" },
+  ],
+  Pidgey: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/pidgey.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/pidgeotto.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/pidgeot.png" },
+  ],
+  Cleffa: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/cleffa.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/clefairy.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/clefable.png" },
+  ],
+  Zubat: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/zubat.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/golbat.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/crobat.png" },
+  ],
+  Mankey: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/mankey.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/primeape.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/scarlet-violet/normal/annihilape.png" },
+  ],
+  Poliwag: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/poliwag.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/poliwhirl.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/poliwrath.png" },
+  ],
+  Abra: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/abra.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/kadabra.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/alakazam.png" },
+  ],
+  Machop: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/machop.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/machoke.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/machamp.png" },
+  ],
+  Geodude: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/geodude.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/graveler.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/golem.png" },
+  ],
+  Gastly: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/gastly.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/haunter.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/gengar.png" },
+  ],
+  Porygon: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/porygon.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/porygon2.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/porygon-z.png" },
+  ],
+  Dratini: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/dratini.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/dragonair.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/dragonite.png" },
+  ],
+  Cyndaquil: [
+    { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/cyndaquil.png" },
+    { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/quilava.png" },
+    { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/typhlosion.png" },
   ]
 };
+var completedPokemon = {
+  Pichu: 0,
+  Squirtle: 0,
+  Charmander: 0,
+  Bulbasaur: 0,
+  Caterpie: 0,
+  Magnemite: 0,
+  Pidgey: 0,
+  Cleffa: 0,
+  Zubat: 0,
+  Mankey: 0,
+  Poliwag: 0,
+  Abra: 0,
+  Machop: 0,
+  Geodude: 0,
+  Gastly: 0,
+  Porygon: 0,
+  Dratini: 0,
+  Cyndaquil: 0
+}
+
+var startingLeets = [0, 0, 0];
+var leetDiffs = [0, 0, 0];
+var username = "";
+var APIurl = "";
+
 
 function App() {
   var tipsList = [
@@ -59,7 +169,8 @@ function App() {
     "Stay up-to-date with the syllabus. Professors won’t remind you about every deadline.",
     "Don’t expect to understand everything immediately. CS concepts take time to sink in.",
     "Learn the basics of UNIX and command-line tools. You’ll use them throughout your degree.",
-    "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging."
+    "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging.", 
+    "Click on me for some useful CS tips!"
   ];
 
   function randomizeArray(array) {
@@ -78,7 +189,21 @@ function App() {
   const [cookiesEaten, setCookiesEaten] = useState(0);
   const [steakEaten, setSteakEaten] = useState(0);
   const [gapplesEaten, setGapplesEaten] = useState(0);
-  const [showTextBox, setShowTextBox] = useState(false);
+  const [showTextBox, setShowTextBox] = useState(true);
+  const [isPast25, setIsPast25] = useState(0);
+  const currentAudioRef = useRef(null);
+  const newAudioRef = useRef(null);
+
+  const playNewAudio = () => {
+    // Stop the current audio if it's playing
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0; // Reset to start
+    }
+
+    // Start playing the new audio
+    newAudioRef.current.play();
+  };
 
   const handleClick = () => {
     setShowTextBox(!showTextBox); // Toggle the text box visibility
@@ -88,15 +213,77 @@ function App() {
   };
 
   const increaseLevel = (points) => {
-    setLevel(level + points);
-    if (points === 1) setCookiesEaten(cookiesEaten + 1);
-    if (points === 5) setSteakEaten(steakEaten + 1);
+    if (level + points >= 100) playNewAudio();
+    if (points === 10) setCookiesEaten(cookiesEaten + 1);
+    if (points === 15) setSteakEaten(steakEaten + 1);
     if (points === 25) setGapplesEaten(gapplesEaten + 1);
+    if (level + points >= 25) setIsPast25(100);
+    setLevel(level + points);
   };
 
+  async function fetchData(url) {
+    try {
+      const response = await fetch(url); // Fetch data from the provided URL
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json(); // Parse the response as JSON
+      return data; // Return the JSON data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null; // Handle the error, returning null or an empty object if needed
+    }
+  }
+
+  async function setLeetCodes() {
+    username = prompt("Enter Leetcode Username");
+    if (username == null) {
+      alert("No username entered.");
+      return;
+    }
+    APIurl = `http://localhost:3001/${username}`;
+    const leetData = await fetchData(APIurl);
+    if (leetData == null) {
+      alert("Invalid username.") //TODO more robust error detection system based on API
+      return;
+    }
+    console.log(leetData);
+    startingLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    console.log(startingLeets);
+  }
+
+  async function addLeetCodes() {
+    if (username == null) {
+      alert("No username entered.");
+      return;
+    }
+    setCookiesEaten(cookiesEaten - leetDiffs[0]);
+    setSteakEaten(steakEaten - leetDiffs[1]);
+    setGapplesEaten(gapplesEaten - leetDiffs[2]);
+    const leetData = await fetchData(APIurl);
+    if (leetData == null) {
+      alert("Invalid username.")  //TODO more robust error detection system based on API
+      return;
+    }
+    var curLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    leetDiffs[0] = curLeets[0] - startingLeets[0];
+    leetDiffs[1] = curLeets[1] - startingLeets[1];
+    leetDiffs[2] = curLeets[2] - startingLeets[2];
+    var newLevel = level + 10 * leetDiffs[0] + 20 * leetDiffs[1] + 40 * leetDiffs[2];
+    if (newLevel >= 100) playNewAudio();
+    setCookiesEaten(cookiesEaten + leetDiffs[0]);
+    setSteakEaten(steakEaten + leetDiffs[1]);
+    setGapplesEaten(gapplesEaten + leetDiffs[2]);
+    if (newLevel >= 25) setIsPast25(100);
+    setLevel(newLevel);
+  }
+
   const resetLevel = () => {
+    completedPokemon[selectedPokemon.name] = 1;
     setLevel(0);
+    setIsPast25(0);
     setSelectedPokemon(null);
+    setShowTextBox(true);
   };
 
   // Current pokemon stage based on level
@@ -114,30 +301,44 @@ function App() {
     return (
       <div
         style={{
-          width: '375px',
+          width: '18vw',
           margin: '0 auto',
           border: '1px solid #ccc',
-          padding: '20px',
+          padding: '2rem',
           height: '90vh',
-          boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+          boxShadow: 'inset 0 0 0 5px #e0e0e0',
           textAlign: 'center',
+          backgroundColor: '#f8f8f8'
         }}
       >
-        <h2>Choose Your Pokémon</h2>
-        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '20px' }}>
+        <img src={"BOILERMON.png"} style = {{width: "8vw", margin: "0 auto"}}></img>
+        <h2 style = {{margin: "0vh", marginTop: "3vh"}}>Choose Your Pokémon!</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', marginTop: '0vh' }}>
           {Object.keys(evolutionChains).map((pokemonName) => (
             <div key={pokemonName} style={{ textAlign: 'center' }}>
-              <img
-                src={evolutionChains[pokemonName][0].image}
-                alt={pokemonName}
-                style={{ width: '100px', cursor: 'pointer' }}
-                onClick={() => setSelectedPokemon({ name: pokemonName })}
-              />
-              <p>{pokemonName}</p>
+              {completedPokemon[pokemonName] == 0 ? (
+                <img
+                  src={evolutionChains[pokemonName][0].image}
+                  alt={pokemonName}
+                  style={{ width: '6vw', cursor: 'pointer', filter: 'brightness(0%)'}}
+                  onClick={() => setSelectedPokemon({ name: pokemonName })}
+                />
+              ) : (
+                <img
+                  src={evolutionChains[pokemonName][0].image}
+                  alt={pokemonName}
+                  style={{ width: '6vw', cursor: 'pointer', filter: 'brightness(100%)'}}
+                  onClick={() => setSelectedPokemon({ name: pokemonName })}
+                />
+              )}
+              {completedPokemon[pokemonName] == 0 ? (
+                <p style={{margin:"0vh", fontFamily: "Verdana", fontWeight: "bold"}}>???</p>
+              ) : (
+                <p style={{margin:"0vh", fontWeight: "bold"}}>{pokemonName}</p>
+              )}
             </div>
           ))}
         </div>
-        <audio src={backgroundMusic} autoPlay loop />
       </div>
     );
   }
@@ -148,17 +349,14 @@ function App() {
         width: '50vh',
         margin: '0 auto',
         border: '1px solid #ccc',
-        padding: '20px',
-        height: '100vh',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        padding: '2rem',
+        height: '93vh',
         position: 'relative',
       }}
     >
       {/* Background Music */}
-      <audio src={backgroundMusic} autoPlay loop />
-
-      {/* Level display */}
-      <h2 style={{ position: 'absolute', top: 0, left: 30 }}>Level: {level}</h2>
+      <audio ref={currentAudioRef} src={backgroundMusic} autoPlay loop />
+      <audio ref={newAudioRef} src={victoryMusic} />
 
       {/* Main Content */}
       {level < 100 ? (
@@ -167,12 +365,28 @@ function App() {
               display: 'flex',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              height: '100vh',
+              height: '93vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
-            <img src={displayedImage} alt="Pokemon" style={{ width: '18vw', height: 'auto', marginTop: '49vh', marginBottom: '1vh', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
+            <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Level up your Pokémon with LeetCode!</p>
+            {/* Level display */}
+            {isPast25 == 0 ? (
+              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+                <span style={{fontFamily: 'Verdana'}}>???</span> <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+              </p>
+            ) : (
+              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+                {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+              </p>
+            )}
+            {isPast25 == 0 ? (
+              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
+            ) : (
+              <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+            )}
             {showTextBox && (
               <div style={{
+                marginTop: '-2.5vh',
                 marginBottom: '5vh', // Position the text box above the image
                 padding: '10px',
                 border: '1px solid gray',
@@ -187,8 +401,8 @@ function App() {
           </div>
 
           {/* Food Buttons */}
-          <div style={{ position: 'absolute', top: 0, right: 0 }}>
-            <button onClick={() => increaseLevel(1)} style={{
+          <div style={{ position: 'absolute', top: 110, right: 30 }}>
+            <button onClick={() => increaseLevel(10)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
                 display: 'flex',
@@ -196,9 +410,9 @@ function App() {
                 margin: '10px',
               }}>
               <img src="https://minecraft.wiki/images/Cookie_JE2_BE2.png?a911c&20190505051355" alt="Cookie" style={{ width: 30, height: 30, marginRight: 5 }} />
-              (+1)
+              (+10)
             </button>
-            <button onClick={() => increaseLevel(5)} style={{
+            <button onClick={() => increaseLevel(15)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
                 display: 'flex',
@@ -206,7 +420,7 @@ function App() {
                 margin: '10px',
               }}>
               <img src="https://minecraft.wiki/images/Steak_JE4_BE3.png?45317&20190504055306" alt="Steak" style={{ width: 30, height: 30, marginRight: 5 }} />
-              (+5)
+              (+15)
             </button>
             <button onClick={() => increaseLevel(25)} style={{
                 padding: '10px 5.5px',
@@ -218,30 +432,55 @@ function App() {
               <img src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809" alt="Golden Apple" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+25)
             </button>
+            <button onClick={() => setLeetCodes()} style={{
+                padding: '10px 5.5px',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '10px',
+              }}>
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
+              (set)
+            </button>
+            <button onClick={() => addLeetCodes()} style={{
+                padding: '10px 5.5px',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '10px',
+              }}>
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
+              (add)
+            </button>
           </div>
         </>
       ) : (
         <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '105vh',
-            textAlign: 'center',
-          }}>
-          <p style={{ fontSize: '19px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>You've reached the final stage!</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total easy questions solved: {cookiesEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total medium questions solved: {steakEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total hard questions solved: {gapplesEaten}</p>
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          height: '93vh',
+          flexDirection: 'column', // Stack elements vertically
+        }}>
+          <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Congratulations on fully<br /> evolving your Pokémon!</p>
+          <p style={{ fontSize: '20px', color: "white", fontWeight: 'bold', textAlign: 'center', marginTop: '0px'}}>Easy: {cookiesEaten} Medium: {steakEaten} Hard: {gapplesEaten}</p>
+          {/* Level display */}
+          <p style={{color: 'white', marginTop: '35vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+            {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+          </p>
+          <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+
           <button onClick={resetLevel} style={{
-              padding: '10px 20px',
-              fontSize: '16px',
+              padding: '12px 24px',
+              fontSize: '20px',
               cursor: 'pointer',
-              backgroundColor: '#ffcc00',
+              backgroundColor: '#00DF00',
               border: 'none',
               borderRadius: '5px',
-              marginTop: '10px',
-            }}>Retry</button>
+              fontWeight: 'bold',
+              color: 'white',
+              textShadow: 'white 0px 0 10px'
+          }}>Continue »</button>
         </div>
       )}
     </div>
