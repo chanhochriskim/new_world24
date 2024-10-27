@@ -125,6 +125,8 @@ var completedPokemon = {
   Cyndaquil: 0
 }
 
+var startingLeets = [0, 0, 0];
+
 function App() {
   var tipsList = [
     "Take care of your mental health in this major. Find some healthy coping mechanisms like working out or going for walks.",
@@ -214,6 +216,14 @@ function App() {
     if (level + points >= 25) setIsPast25(100);
     setLevel(level + points);
   };
+
+  const setLeetCodes = () => {
+    const username = prompt("Enter Leetcode Username");
+  }
+
+  const addLeetCodes = () => {
+    return;
+  }
 
   const resetLevel = () => {
     completedPokemon[selectedPokemon.name] = 1;
@@ -368,6 +378,26 @@ function App() {
               }}>
               <img src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809" alt="Golden Apple" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+25)
+            </button>
+            <button onClick={() => setLeetCodes()} style={{
+                padding: '10px 5.5px',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '10px',
+              }}>
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
+              (set)
+            </button>
+            <button onClick={() => addLeetCodes()} style={{
+                padding: '10px 5.5px',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                margin: '10px',
+              }}>
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
+              (add)
             </button>
           </div>
         </>
