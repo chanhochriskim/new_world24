@@ -124,10 +124,11 @@ var completedPokemon = {
   Cyndaquil: 0
 }
 
+var startingLeets = [0, 0, 0];
 var leetDiffs1 = [0, 0, 0];
 var leetDiffs2 = [0, 0, 0];
-var username = null;
-var APIurl = null;
+var username = "";
+var APIurl = "";
 var onLoadSite = false;
 
 var tipsList = [
@@ -179,7 +180,7 @@ function randomizeArray(array) {
 }
 
 tipsList = randomizeArray(tipsList);
-tipsList.push("Click on your Pokémon for useful CS tips!");
+tipsList.push("Click on me for useful CS tips!");
 var tipIndex = tipsList.length - 1;
 
 function App() {
@@ -188,6 +189,7 @@ function App() {
   const [cookiesEaten, setCookiesEaten] = useState(0);
   const [steakEaten, setSteakEaten] = useState(0);
   const [gapplesEaten, setGapplesEaten] = useState(0);
+  const [showTextBox, setShowTextBox] = useState(true);
   const [isPast25, setIsPast25] = useState(0);
   const currentAudioRef = useRef(null);
   const newAudioRef = useRef(null);
@@ -196,10 +198,10 @@ function App() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCount(count + 1);
-      if (username == null) setLeetCodes();
-      if ((selectedPokemon != null) && (level < 100)) addLeetCodes();
-    }, 3000)
+      //setCount(count + 1);
+      //if (username == null) setLeetCodes();
+      //if ((selectedPokemon != null) && (level < 100)) addLeetCodes();
+    }, 6000)
     return () => clearInterval(intervalId);
   }, [count])
 
@@ -256,7 +258,7 @@ function App() {
     console.log(leetData);
     if (leetData == null || leetData.errors != undefined) {
       username = null;
-      alert("Invalid username."); 
+      alert("Invalid username."); //TODO more robust error detection system based on API
       return false;
     }
     leetDiffs1 = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
@@ -265,26 +267,26 @@ function App() {
   }
 
   async function addLeetCodes() {
-    console.log("add attempted");
     if (username == null) {
       alert("No username entered.");
       username = prompt("Enter Your Leetcode Username:");
       return;
     }
+    
     const leetData = await fetchData(APIurl);
     if (leetData == null || leetData.errors != undefined) {
-      alert("Invalid username.");
+      alert("Invalid username.")  //TODO more robust error detection system based on API
       username = null;
       return;
     }
     leetDiffs2 = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
     var newDiffs = [leetDiffs1[0] - leetDiffs2[0], leetDiffs1[1] - leetDiffs2[1], leetDiffs1[2] - leetDiffs2[2]];
-    increaseLevel(10 * newDiffs[0] + 20 * newDiffs[1] + 40 * newDiffs[2]);
     leetDiffs1 = leetDiffs2;
+    increaseLevel(10 * newDiffs[0] + 20 * newDiffs[1] + 40 * newDiffs[2]);
   }
 
   const resetLevel = () => {
-    completedPokemon[selectedPokemon.name] = level;
+    completedPokemon[selectedPokemon.name] = 1;
     setLevel(0);
     setIsPast25(0);
     setSelectedPokemon(null);
@@ -322,11 +324,11 @@ function App() {
         }}
       >
         <img src={"BOILERMON.png"} style = {{width: "150px", margin: "0 auto"}}></img>
-        <h2 style = {{margin: "0vh", marginTop: "3vh", marginBottom: "3vh"}}>Choose Your Pokémon!</h2>
+        <h2 style = {{margin: "0vh", marginTop: "1vh", marginBottom: "1vh"}}>Choose Your Pokémon!</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', marginTop: '0vh' }}>
           {Object.keys(evolutionChains).map((pokemonName) => (
             <div key={pokemonName} style={{ textAlign: 'center' }}>
-              {completedPokemon[pokemonName] < 25 ? (
+              {completedPokemon[pokemonName] == 0 ? (
                 <img
                   src={evolutionChains[pokemonName][0].image}
                   alt={pokemonName}
@@ -341,10 +343,10 @@ function App() {
                   onClick={() => setSelectedPokemon({ name: pokemonName })}
                 />
               )}
-              {completedPokemon[pokemonName] < 25 ? (
-                <p style={{marginTop:"-2vh", fontFamily: "Verdana", fontWeight: "bold", marginBottom: "1.5vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>???</p>
+              {completedPokemon[pokemonName] == 0 ? (
+                <p style={{marginTop:"-2vh", fontFamily: "Verdana", fontWeight: "bold", marginBottom: "-2vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>???</p>
               ) : (
-                <p style={{marginTop:"-2vh", fontWeight: "bold", marginBottom: "1.5vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>{pokemonName}</p>
+                <p style={{marginTop:"-2vh", fontWeight: "bold", marginBottom: "-2vh", fontSize: "8", marginLeft: "-10px", marginRight: "-10px"}}>{pokemonName}</p>
               )}
             </div>
           ))}
@@ -352,7 +354,7 @@ function App() {
       </div>
     );
   }
-  completedPokemon[selectedPokemon.name] = level
+
   return (
     <div className="app-container"
       style={{
@@ -378,38 +380,40 @@ function App() {
               height: '93vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
-            <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Level up your Pokémon with LeetCode!</p>
+            <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh', marginTop: '0vh'}}>Level up your Pokémon with LeetCode!</p>
             {/* Level display */}
-            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] < 25)) ? (
-              <p style={{color: 'white', marginTop: '37vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] == 0)) ? (
+              <p style={{color: 'white', marginTop: '27vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
                 <span style={{fontFamily: 'Verdana'}}>???</span> <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
               </p>
             ) : (
-              <p style={{color: 'white', marginTop: '37vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+              <p style={{color: 'white', marginTop: '27vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
                 {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
               </p>
             )}
-            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] < 25)) ? (
+            {((isPast25 == 0) && (completedPokemon[selectedPokemon.name] == 0)) ? (
               <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
             ) : (
               <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
             )}
-            <div style={{
-              marginTop: '-2.5vh',
-              marginBottom: '5vh', // Position the text box above the image
-              padding: '10px',
-              border: '1px solid gray',
-              borderRadius: '5px',
-              backgroundColor: '#f8f8f8',
-              width: '80%',
-              textAlign: 'center'
-            }}>
-              {tipsList[tipIndex]}
-            </div>
+            {showTextBox && (
+              <div style={{
+                marginTop: '-2.5vh',
+                marginBottom: '5vh', // Position the text box above the image
+                padding: '10px',
+                border: '1px solid gray',
+                borderRadius: '5px',
+                backgroundColor: '#f8f8f8',
+                width: '80%',
+                textAlign: 'center'
+              }}>
+                {tipsList[tipIndex]}
+              </div>
+            )}
           </div>
 
           {/* Food Buttons */}
-          <div style={{ position: 'absolute', top: 110, right: 30, display: 'none' }}>
+          <div style={{ position: 'absolute', top: 30, right: 30 }}>
             <button onClick={() => increaseLevel(10)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
@@ -440,16 +444,6 @@ function App() {
               <img src="https://minecraft.wiki/images/Golden_Apple_JE2_BE2.png?aa827&20200521041809" alt="Golden Apple" style={{ width: 30, height: 30, marginRight: 5 }} />
               (+25)
             </button>
-            <button onClick={() => addLeetCodes()} style={{
-                padding: '10px 5.5px',
-                fontSize: '18px',
-                display: 'flex',
-                alignItems: 'center',
-                margin: '10px',
-              }}>
-              <img src="https://cdn.iconscout.com/icon/free/png-256/free-leetcode-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-4-pack-logos-icons-2944960.png?f=webp" alt="Leet Codes" style={{ width: 30, height: 30, marginRight: 5 }} />
-              Update
-            </button>
           </div>
         </>
       ) : (
@@ -463,12 +457,13 @@ function App() {
           <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh', marginTop: '0vh', textShadow: 'white 0px 0 2px'}}>Congratulations on fully evolving your Pokémon!</p>
           <p style={{ fontSize: '20px', color: "white", fontWeight: 'bold', textAlign: 'center', marginTop: '0px', textShadow: 'white 0px 0 1px'}}>Easy: {cookiesEaten} Medium: {steakEaten} Hard: {gapplesEaten}</p>
           {/* Level display */}
-          <p style={{color: 'white', marginTop: '35vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+          <p style={{color: 'white', marginTop: '20vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
             {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
           </p>
           <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '300px', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
 
           <button onClick={resetLevel} style={{
+              marginTop: '-2vh',
               padding: '12px 24px',
               fontSize: '20px',
               cursor: 'pointer',
