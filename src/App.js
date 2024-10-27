@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 import backgroundMusic from './background.mp3'; // Import audio file
+import victoryMusic from './victory.mp3';
 
 
 //future: API, add account so can save progress on who's been unlocked, who's at what percentage, also battles, also leaderboards, 
@@ -162,7 +163,8 @@ function App() {
     "Stay up-to-date with the syllabus. Professors won’t remind you about every deadline.",
     "Don’t expect to understand everything immediately. CS concepts take time to sink in.",
     "Learn the basics of UNIX and command-line tools. You’ll use them throughout your degree.",
-    "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging."
+    "Celebrate small wins. Finishing an assignment or understanding a tough concept is worth acknowledging.", 
+    "Click on me for some useful CS tips!"
   ];
 
   function randomizeArray(array) {
@@ -181,8 +183,21 @@ function App() {
   const [cookiesEaten, setCookiesEaten] = useState(0);
   const [steakEaten, setSteakEaten] = useState(0);
   const [gapplesEaten, setGapplesEaten] = useState(0);
-  const [showTextBox, setShowTextBox] = useState(false);
+  const [showTextBox, setShowTextBox] = useState(true);
   const [isPast25, setIsPast25] = useState(0);
+  const currentAudioRef = useRef(null);
+  const newAudioRef = useRef(null);
+
+  const playNewAudio = () => {
+    // Stop the current audio if it's playing
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0; // Reset to start
+    }
+
+    // Start playing the new audio
+    newAudioRef.current.play();
+  };
 
   const handleClick = () => {
     setShowTextBox(!showTextBox); // Toggle the text box visibility
@@ -192,6 +207,7 @@ function App() {
   };
 
   const increaseLevel = (points) => {
+    if (level + points >= 100) playNewAudio();
     if (points === 10) setCookiesEaten(cookiesEaten + 1);
     if (points === 15) setSteakEaten(steakEaten + 1);
     if (points === 25) setGapplesEaten(gapplesEaten + 1);
@@ -204,6 +220,7 @@ function App() {
     setLevel(0);
     setIsPast25(0);
     setSelectedPokemon(null);
+    setShowTextBox(true);
   };
 
   // Current pokemon stage based on level
@@ -251,7 +268,11 @@ function App() {
                   onClick={() => setSelectedPokemon({ name: pokemonName })}
                 />
               )}
-              <p style={{margin:"0vh"}}>{pokemonName}</p>
+              {completedPokemon[pokemonName] == 0 ? (
+                <p style={{margin:"0vh", fontFamily: "Verdana", fontWeight: "bold"}}>???</p>
+              ) : (
+                <p style={{margin:"0vh", fontWeight: "bold"}}>{pokemonName}</p>
+              )}
             </div>
           ))}
         </div>
@@ -271,7 +292,8 @@ function App() {
       }}
     >
       {/* Background Music */}
-      <audio src={backgroundMusic} autoPlay loop />
+      <audio ref={currentAudioRef} src={backgroundMusic} autoPlay loop />
+      <audio ref={newAudioRef} src={victoryMusic} />
 
       {/* Main Content */}
       {level < 100 ? (
@@ -283,10 +305,17 @@ function App() {
               height: '93vh',
               flexDirection: 'column', // Stack elements vertically
             }}>
+            <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Level up your Pokémon with LeetCode!</p>
             {/* Level display */}
-            <p style={{color: 'white', marginTop: '51.5vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
-              {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
-            </p>
+            {isPast25 == 0 ? (
+              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+                <span style={{fontFamily: 'Verdana'}}>???</span> <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+              </p>
+            ) : (
+              <p style={{color: 'white', marginTop: '39.65vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+                {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+              </p>
+            )}
             {isPast25 == 0 ? (
               <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
             ) : (
@@ -309,7 +338,7 @@ function App() {
           </div>
 
           {/* Food Buttons */}
-          <div style={{ position: 'absolute', top: 0, right: 0 }}>
+          <div style={{ position: 'absolute', top: 110, right: 30 }}>
             <button onClick={() => increaseLevel(10)} style={{
                 padding: '10px 10px',
                 fontSize: '18px',
@@ -356,11 +385,8 @@ function App() {
           <p style={{color: 'white', marginTop: '35vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
             {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
           </p>
-          {isPast25 == 0 ? (
-            <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
-          ) : (
-            <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
-          )}
+          <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+
           <button onClick={resetLevel} style={{
               padding: '12px 24px',
               fontSize: '20px',
@@ -368,7 +394,6 @@ function App() {
               backgroundColor: '#00DF00',
               border: 'none',
               borderRadius: '5px',
-              marginTop: '10px',
               fontWeight: 'bold',
               color: 'white',
               textShadow: 'white 0px 0 10px'
