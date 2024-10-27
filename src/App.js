@@ -253,7 +253,9 @@ function App() {
               flexDirection: 'column', // Stack elements vertically
             }}>
             {/* Level display */}
-            <h2 style={{color: 'white', marginTop: '56vh', marginBottom: '-2vh'}}>Lvl. {level}</h2>
+            <h2 style={{color: 'white', marginTop: '56vh', marginBottom: '-2vh'}}>
+              {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} lvl. {level}
+            </h2>
             <img src={displayedImage} alt="Pokemon" style={{ width: '18vw', height: 'auto', padding: '0px'}} className="bouncy" onClick = {handleClick}/>
             {showTextBox && (
               <div style={{
