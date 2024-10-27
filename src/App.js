@@ -244,7 +244,7 @@ function App() {
     APIurl = `http://localhost:3001/${username}`;
     const leetData = await fetchData(APIurl);
     if (leetData == null) {
-      alert("Invalid username.")
+      alert("Invalid username.") //TODO more robust error detection system based on API
       return;
     }
     console.log(leetData);
@@ -262,7 +262,7 @@ function App() {
     setGapplesEaten(gapplesEaten - leetDiffs[2]);
     const leetData = await fetchData(APIurl);
     if (leetData == null) {
-      alert("Invalid username.")
+      alert("Invalid username.")  //TODO more robust error detection system based on API
       return;
     }
     var curLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
