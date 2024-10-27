@@ -126,6 +126,10 @@ var completedPokemon = {
 }
 
 var startingLeets = [0, 0, 0];
+var leetDiffs = [0, 0, 0];
+var username = "";
+var APIurl = "";
+
 
 function App() {
   var tipsList = [
@@ -217,12 +221,45 @@ function App() {
     setLevel(level + points);
   };
 
-  const setLeetCodes = () => {
-    const username = prompt("Enter Leetcode Username");
+  async function fetchData(url) {
+    try {
+      const response = await fetch(url); // Fetch data from the provided URL
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json(); // Parse the response as JSON
+      return data; // Return the JSON data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null; // Handle the error, returning null or an empty object if needed
+    }
   }
 
-  const addLeetCodes = () => {
-    return;
+  async function setLeetCodes() {
+    username = prompt("Enter Leetcode Username");
+    APIurl = `http://localhost:3001/${username}`;
+    const leetData = await fetchData(APIurl);
+    console.log(leetData);
+    startingLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    console.log(startingLeets);
+  }
+
+  async function addLeetCodes() {
+    setCookiesEaten(cookiesEaten - leetDiffs[0]);
+    setSteakEaten(steakEaten - leetDiffs[1]);
+    setGapplesEaten(gapplesEaten - leetDiffs[2]);
+    const leetData = await fetchData(APIurl);
+    var curLeets = [leetData.easySolved, leetData.mediumSolved, leetData.hardSolved];
+    leetDiffs[0] = curLeets[0] - startingLeets[0];
+    leetDiffs[1] = curLeets[1] - startingLeets[1];
+    leetDiffs[2] = curLeets[2] - startingLeets[2];
+    var newLevel = level + 10 * leetDiffs[0] + 20 * leetDiffs[1] + 40 * leetDiffs[2];
+    if (newLevel >= 100) playNewAudio();
+    setCookiesEaten(cookiesEaten + leetDiffs[0]);
+    setSteakEaten(steakEaten + leetDiffs[1]);
+    setGapplesEaten(gapplesEaten + leetDiffs[2]);
+    if (newLevel >= 25) setIsPast25(100);
+    setLevel(newLevel);
   }
 
   const resetLevel = () => {
