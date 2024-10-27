@@ -435,7 +435,7 @@ function App() {
               (+15)
             </button>
             <button onClick={() => increaseLevel(25)} style={{
-                padding: '10px 5.5px',
+                padding: '10tpx 5.5px',
                 fontSize: '18px',
                 display: 'flex',
                 alignItems: 'center',
