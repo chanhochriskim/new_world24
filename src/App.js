@@ -27,7 +27,7 @@ const evolutionChains = {
     { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/charmeleon.png" },
     { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/charizard.png" },
   ],
-  Bublasaur: [
+  Bulbasaur: [
     { level: 0, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/bulbasaur.png" },
     { level: 50, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/ivysaur.png" },
     { level: 75, image: "https://img.pokemondb.net/sprites/brilliant-diamond-shining-pearl/normal/venusaur.png" },
@@ -284,9 +284,9 @@ function App() {
               flexDirection: 'column', // Stack elements vertically
             }}>
             {/* Level display */}
-            <h2 style={{color: 'white', marginTop: '53vh', marginBottom: '-0.5vh'}}>
-              {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} lvl. {level}
-            </h2>
+            <p style={{color: 'white', marginTop: '51.5vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+              {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+            </p>
             {isPast25 == 0 ? (
               <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
             ) : (
@@ -344,26 +344,35 @@ function App() {
         </>
       ) : (
         <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '120vh',
-            textAlign: 'center',
-          }}>
-          <p style={{ fontSize: '19px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Congradulations on fully evolving your Pokemon!</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total easy questions solved: {cookiesEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total medium questions solved: {steakEaten}</p>
-          <p style={{ fontSize: '14px', color: "white", fontWeight: 'bold', backgroundColor: "#333333"}}>Total hard questions solved: {gapplesEaten}</p>
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          height: '93vh',
+          flexDirection: 'column', // Stack elements vertically
+        }}>
+          <p style={{ fontSize: '30px', color: "white", fontWeight: 'bold', textAlign: 'center', marginBottom: '1vh'}}>Congratulations on fully<br /> evolving your Pokémon!</p>
+          <p style={{ fontSize: '20px', color: "white", fontWeight: 'bold', textAlign: 'center', marginTop: '0px'}}>Easy: {cookiesEaten} Medium: {steakEaten} Hard: {gapplesEaten}</p>
+          {/* Level display */}
+          <p style={{color: 'white', marginTop: '35vh', marginBottom: '-0.5vh', fontSize: '25px', fontWeight: 'bold', textAlign: 'center', textShadow: 'black 0px 0 10px'}}>
+            {displayedImage.match(/\/([^\/]+)\.png$/)[1].charAt(0).toUpperCase() + displayedImage.match(/\/([^\/]+)\.png$/)[1].slice(1)} <span style={{fontSize: '15px', fontWeight: 'normal'}}>lvl. {level}</span>
+          </p>
+          {isPast25 == 0 ? (
+            <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(0%)'}} onClick = {handleClick}/>
+          ) : (
+            <img src={displayedImage} alt="Pokemon" className="bouncy" style={{ width: '18vw', height: 'auto', padding: '0px', filter: 'brightness(100%)'}} onClick = {handleClick}/>
+          )}
           <button onClick={resetLevel} style={{
-              padding: '10px 20px',
-              fontSize: '16px',
+              padding: '12px 24px',
+              fontSize: '20px',
               cursor: 'pointer',
-              backgroundColor: '#ffcc00',
+              backgroundColor: '#00DF00',
               border: 'none',
               borderRadius: '5px',
               marginTop: '10px',
-            }}>Continue</button>
+              fontWeight: 'bold',
+              color: 'white',
+              textShadow: 'white 0px 0 10px'
+          }}>Continue »</button>
         </div>
       )}
     </div>
